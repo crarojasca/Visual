@@ -5,10 +5,11 @@ boolean active = true;
 
 color black = color(0,0,0);
 color white = color(255,255,255);
-color blue = color(0,0,200);
-color yellow = color(200,200,0);
+color blue = color(0,0,150);
+color yellow = color(150,150,0);
 color red = color(200,0,0);
 color pink = color(255, 43, 206);
+color gray = color(242,242,242);
 
 float angle = 0;
 float radius;
@@ -63,7 +64,7 @@ void keyPressed() {
       radius = 600;
     } else if(current == 5){
       angle = 0;
-      radius = 100;
+      radius = 0;
       enable = false;
       x = 200;
       y = 200;
@@ -247,16 +248,21 @@ void circlesMovement(){
 }
 
 void race(){
+  step++;
+  frameRate(8);
   background(white);          // black background
   
-  x += 1;
-  y += 2;
+  //if(step%2==0){
+  //  x += 1;
+  //}else{
+  //  y += 1;
+  //}
   
-  fill(blue);
-  rect(x,380,40,20);
+  x+=2;
+  y+=2;
   
-  fill(red);
-  rect(y,420,40,20);
+  
+   
   
   if(mousePressed == false){       
     for(int i = 0; i < 40; i=i+2){
@@ -266,21 +272,27 @@ void race(){
       rect(i*width/40,0,20, 800);
     }
   }  
+  fill(blue);
+  rect(x,300,90,45); 
+  
+  fill(yellow);
+  rect(y,500,90,45);
 }
 
 void pinkCircle(){
-  background(white);
+  frameRate(30);
+  background(gray);
   step++;
   strokeWeight(4); 
   line(400,390,400,410);
   line(390,400,410,400);
-  if (step == 1200){
+  if (step == 120){
     step = 0;
   }
   noStroke();  
   int circle = 0;
   for (float angle = 0; angle < 2*PI; angle = angle + PI/6){
-    if(circle != round(step/100)){
+    if(circle != round(step/10)){
       drawGradient(300*cos(angle) + 400, 300*sin(angle) + 400); 
     }
     circle++;
@@ -291,10 +303,10 @@ void drawGradient(float x, float y) {
   int radius = 100;
   float h = 0;
   color cCircle = white;
-  for (int r = radius; r > 10; r = r - 10) {
+  for (int r = radius; r > 50; r = r - 2) {
     fill(cCircle);
     ellipse(x, y, r, r);   
-    cCircle = lerpColor(white, pink, h) ;
-    h = h + 0.2;
+    cCircle = lerpColor(gray, pink, h) ;
+    h = h + 0.04;
   }
 }
