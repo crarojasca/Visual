@@ -4,7 +4,7 @@ class Mesh {
   float radius = 200;
   PShape shape;
   ArrayList<PVector> vertices;
-
+  
   // rendering
   boolean retained;
 
@@ -27,17 +27,28 @@ class Mesh {
   // compute both mesh vertices and pshape
   // TODO: implement me
   void build() {
+    shape = loadShape("wolf.obj");
     vertices = new ArrayList<PVector>();
+    for(int i=0; i<shape.getChildCount(); i++){
+      PShape child = shape.getChild(i);
+      for(int j=0; j<child.getVertexCount();j++){
+        vertices.add(child.getVertex(j));
+
+      }
+    }
+    println("");
+      
+    
     
     // for example if we were to render a quad:
-    vertices.add(new PVector(-150,150,0));
-    vertices.add(new PVector(150,150,0));
-    vertices.add(new PVector(150,-150,0));
-    vertices.add(new PVector(-150,-150,0));
+    //vertices.add(new PVector(-150,150,0));
+    //vertices.add(new PVector(150,150,0));
+    //vertices.add(new PVector(150,-150,0));
+    //vertices.add(new PVector(-150,-150,0));
     //...
     
     shape = createShape();
-    shape.beginShape(QUADS);
+    shape.beginShape(TRIANGLES);
     for(PVector v : vertices)
       shape.vertex(v.x, v.y ,v.z);
     shape.endShape();
@@ -49,7 +60,7 @@ class Mesh {
   // TODO: current implementation targets a quad.
   // Adapt me, as necessary
   void drawImmediate() {
-    beginShape(QUADS);
+    beginShape(TRIANGLES);
     for(PVector v : vertices)
       vertex(v.x, v.y ,v.z);
     endShape();
@@ -76,12 +87,12 @@ class Mesh {
       noStroke();
       break;
     case 3:
-      // TODO: implement me
+      
       break;
     }
 
     // rendering modes
-    if (retained)
+    if (retained) 
       shape(shape);
     else
       drawImmediate();
