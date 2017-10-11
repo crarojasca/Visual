@@ -3,7 +3,15 @@ class Mesh {
   // see: https://en.wikipedia.org/wiki/Bounding_sphere
   float radius = 200;
   PShape shape;
+  PShape VVshape;
+  PShape VFshape;
+  PShape EWshape;
   ArrayList<PVector> vertices;
+  ArrayList<PVector> vertex;
+  ArrayList<ArrayList<Integer>> faces;
+  ArrayList<ArrayList<Integer>> edges;
+  ArrayList<ArrayList<Integer>> vertexVertex;
+  int kind = TRIANGLES;
   
   // rendering
   boolean retained;
@@ -22,45 +30,93 @@ class Mesh {
     build();
     //use processing style instead of pshape's, see https://processing.org/reference/PShape.html
     shape.disableStyle();
+    VFshape.disableStyle();
+    VVshape.disableStyle();
+    EWshape.disableStyle();
   }
 
   // compute both mesh vertices and pshape
   // TODO: implement me
   void build() {
     shape = loadShape("wolf.obj");
-    vertices = new ArrayList<PVector>();
+    vertex = new ArrayList<PVector>();
+    faces = new ArrayList<ArrayList<Integer>>();
+    edges = new ArrayList<ArrayList<Integer>>();
+    vertexVertex = new ArrayList<ArrayList<Integer>>();
+
     for(int i=0; i<shape.getChildCount(); i++){
       PShape child = shape.getChild(i);
+      ArrayList<Integer> face = new ArrayList<Integer>();      
       for(int j=0; j<child.getVertexCount();j++){
-        vertices.add(child.getVertex(j));
+        PVector vert = child.getVertex(j);
+        if(!vertex.contains(vert)){
+          vertex.add(vert);
+          face.add(vertex.size()-1);          
+        }else{
+          face.add(vertex.indexOf(vert));
+        }        
+      }    
+      faces.add(face);
+      
+      for(int j=0; j<face.size(); j++){
+        int k = j == face.size() - 1 ? 0 : j + 1; 
+        ArrayList<Integer> edge = new ArrayList<Integer>(); 
+        edge.add(face.get(j));
+        edge.add(face.get(k));
+        if(!edge.contains(edge)){
+          edges.add(edge);
+        } 
+        addVertexVertex(j, k, face);
+        addVertexVertex(k, j, face);
+      }       
+    } 
 
+    vertices = new ArrayList<PVector>();
+    for(int i = 0; i<vertexVertex.size(); i++){
+      for(Integer vert : vertexVertex.get(i)){
+        vertices.add(vertex.get(i));
+        vertices.add(vertex.get(vert));
       }
     }
-    println("");
-      
     
-    
-    // for example if we were to render a quad:
-    //vertices.add(new PVector(-150,150,0));
-    //vertices.add(new PVector(150,150,0));
-    //vertices.add(new PVector(150,-150,0));
-    //vertices.add(new PVector(-150,-150,0));
-    //...
-    
-    shape = createShape();
-    shape.beginShape(TRIANGLES);
+    VVshape = createShape();
+    VVshape.beginShape(LINES);
     for(PVector v : vertices)
-      shape.vertex(v.x, v.y ,v.z);
-    shape.endShape();
-
-    //don't forget to compute radius too
+      VVshape.vertex(v.x, v.y ,v.z);
+    VVshape.endShape();
+    
+    vertices = new ArrayList<PVector>();
+    for(ArrayList<Integer> edge : edges){
+      for(Integer vert : edge){
+        vertices.add(vertex.get(vert));
+      }
+    }
+    
+    EWshape = createShape();
+    EWshape.beginShape(LINES);
+    for(PVector v : vertices)
+      EWshape.vertex(v.x, v.y ,v.z);
+    EWshape.endShape();   
+    
+    vertices = new ArrayList<PVector>();
+    for(ArrayList<Integer> face : faces){
+      for(Integer vert : face){
+        vertices.add(vertex.get(vert));
+      }
+    }
+    
+    VFshape = createShape();
+    VFshape.beginShape(TRIANGLES);
+    for(PVector v : vertices)
+      VFshape.vertex(v.x, v.y ,v.z);
+    VFshape.endShape();
+    
   }
-
   // transfer geometry every frame
   // TODO: current implementation targets a quad.
   // Adapt me, as necessary
   void drawImmediate() {
-    beginShape(TRIANGLES);
+    beginShape(kind);
     for(PVector v : vertices)
       vertex(v.x, v.y ,v.z);
     endShape();
@@ -82,19 +138,34 @@ class Mesh {
     switch(mode) {
     case 1:
       noFill();
+      kind = TRIANGLES;
       break;
     case 2:
       noStroke();
+      kind = TRIANGLES;
       break;
     case 3:
-      
+      kind = POINTS;
       break;
     }
+    
+    pushMatrix();
+      translate(0,800,400);
+      scale(0.5);
+      shape(VVshape);
+    popMatrix();
+    
+    pushMatrix();
+      translate(0,800,-400);
+      scale(0.5);
+      shape(EWshape);
+    popMatrix();
 
     // rendering modes
-    if (retained) 
-      shape(shape);
-    else
+    if (retained){ 
+      shape(VFshape);
+      
+    }else
       drawImmediate();
     popStyle();
 
@@ -107,4 +178,17 @@ class Mesh {
       popStyle();
     }
   }
+  
+  void addVertexVertex(int v1, int v2, ArrayList<Integer> face){
+    if(vertexVertex.size() <= face.get(v1)){
+      ArrayList<Integer> vertexList = new ArrayList<Integer>();
+      vertexList.add(face.get(v2));
+      vertexVertex.add(face.get(v1), vertexList);
+    }else{
+      if(!vertexVertex.get(face.get(v1)).contains(face.get(v2))){
+        vertexVertex.get(face.get(v1)).add(face.get(v2));
+      }          
+    }
+  }
+  
 }

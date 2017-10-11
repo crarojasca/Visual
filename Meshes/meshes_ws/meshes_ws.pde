@@ -11,11 +11,11 @@ void draw() {
   // draw the mesh at the canvas center
   // while performing a little animation
   
-  translate(width/2, height/2 + 150, 0);
+  translate(width/2, height/2 + 250, 0);
   rotateX(radians(180));
   //rotateX(frameCount*radians(90) / 50);
   rotateY(frameCount*radians(90) / 50);
-  scale(0.5);
+  scale(0.4);
   // mesh draw method
   mesh.draw();
 }
