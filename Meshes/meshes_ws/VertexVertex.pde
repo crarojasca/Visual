@@ -3,11 +3,13 @@ class VertexVertex {
   // see: https://en.wikipedia.org/wiki/Bounding_sphere
   float radius = 200;
   PShape shape;
+  PShape pshape;
   ArrayList<PVector> vertices;
   ArrayList<PVector> vertex;
   ArrayList<ArrayList<Integer>> faces;
   ArrayList<ArrayList<Integer>> edges;
   ArrayList<ArrayList<Integer>> vertexVertex;
+  ArrayList<ArrayList<Integer>> vertexFace;
   int kind = LINES;
   
   // rendering
@@ -28,6 +30,7 @@ class VertexVertex {
     build();
     //use processing style instead of pshape's, see https://processing.org/reference/PShape.html
     shape.disableStyle();
+    pshape.disableStyle();
   }
 
   // compute both mesh vertices and pshape
@@ -40,6 +43,7 @@ class VertexVertex {
     faces = new ArrayList<ArrayList<Integer>>();
     edges = new ArrayList<ArrayList<Integer>>();
     vertexVertex = new ArrayList<ArrayList<Integer>>();
+    vertexFace = new ArrayList<ArrayList<Integer>>();
 
     for(int i=0; i<shape.getChildCount(); i++){
       PShape child = shape.getChild(i);
@@ -47,11 +51,18 @@ class VertexVertex {
       for(int j=0; j<child.getVertexCount();j++){
         PVector vert = child.getVertex(j);
         if(!vertex.contains(vert)){
-          vertex.add(vert);
-          face.add(vertex.size()-1);          
+          vertex.add(vert); 
+          
+          ArrayList<Integer> listVertexFaces = new ArrayList<Integer>();
+          listVertexFaces.add(faces.size());
+          vertexFace.add(listVertexFaces);
+          
+          face.add(vertex.size()-1);  
         }else{
-          face.add(vertex.indexOf(vert));
-        }        
+          int index = vertex.indexOf(vert);
+          vertexFace.get(index).add(faces.size());
+          face.add(index);
+        }      
       }    
       faces.add(face);
       
@@ -69,18 +80,26 @@ class VertexVertex {
     } 
 
     vertices = new ArrayList<PVector>();
-    for(int i = 0; i<vertexVertex.size(); i++){
-      for(Integer vert : vertexVertex.get(i)){
-        vertices.add(vertex.get(i));
-        vertices.add(vertex.get(vert));
+    for(int i = 0; i<vertex.size(); i++){
+      for(Integer face : vertexFace.get(i)){ 
+        for(Integer vert : faces.get(face)){
+          vertices.add(vertex.get(vert));
+        }
       }
+      
     }
     
     shape = createShape();
-    shape.beginShape(LINES);
+    shape.beginShape(TRIANGLES);
     for(PVector v : vertices)
       shape.vertex(v.x, v.y ,v.z);
     shape.endShape();
+    
+    pshape = createShape();
+    pshape.beginShape(POINTS);
+    for(PVector v : vertices)
+      pshape.vertex(v.x, v.y ,v.z);
+    pshape.endShape();
     
   }
   // transfer geometry every frame
@@ -93,14 +112,7 @@ class VertexVertex {
     endShape();
   }
   
-  void refreshShape(){
-    this.shape = createShape();
-    this.shape.beginShape(POINTS);
-    for(PVector v : vertices)
-      this.shape.vertex(v.x, v.y ,v.z);
-    this.shape.endShape();
-    change++;
-  }
+
   
 
   void draw() {
@@ -119,24 +131,26 @@ class VertexVertex {
     switch(mode) {
     case 1:
       noFill();
-      kind = LINES;
+      kind = TRIANGLES;
       break;
     case 2:
       noStroke();
-      kind = LINES;
+      kind = TRIANGLES;
       break;
     case 3:
       kind = POINTS;
       break;
     }
     
-    if (change < 1)
-      refreshShape();
+
     
 
     // rendering modes
     if (retained){ 
-      shape(shape);
+        if(mode == 3)
+          shape(pshape);
+        else
+          shape(shape);        
     }else
       drawImmediate();
     popStyle();
