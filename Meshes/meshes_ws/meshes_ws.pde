@@ -33,7 +33,7 @@ void draw() {
       vertexVertex.draw();
       break;
     case 2:
-      tileRender = "FaseVertex";
+      tileRender = "FaceVertex";
       faceVertex.draw();
       break;
     case 3:
