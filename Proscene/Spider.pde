@@ -22,7 +22,9 @@ public class Spider {
   public void draw( ) {
     pushMatrix();
       pushMatrix();
-        iBodyFrame.applyWorldTransformation();
+        iBodyFrame.applyWorldTransformation();        
+        if (scene.motionAgent().isInputGrabber(iBodyFrame))
+          fill(255, 0, 0);
         shape(bodyShape);
       popMatrix();   
       for(Paw paw : paws){
