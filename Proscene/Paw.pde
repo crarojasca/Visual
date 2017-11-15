@@ -22,41 +22,33 @@ public class Paw {
     }    
   }
   
-  public void draw( ) {
+  public void draw(  ) {
     pushMatrix();     
+
+      if (scene.motionAgent().isInputGrabber(iFrame[0]))
+          scale(1.2); 
+          
       iFrame[0].setTranslation(position);
       iFrame[0].setRotation(rotation);
-      pushMatrix();
-        pushMatrix(); 
-          iFrame[0].applyWorldTransformation();    
-          shape(upperLeg);
-        popMatrix();
-        
-        pushMatrix(); 
-          iFrame[1].setTranslation(13.543, 22.093, 22.87);
-          iFrame[1].setRotation(new Quat(new Vec(0.0f, 0.0f, 1.0f), radians(20)));
-          pushMatrix(); 
-            
-            pushMatrix(); 
-              iFrame[1].applyWorldTransformation(); 
-              shape(mediumLeg);
-            popMatrix();
-            
-            pushMatrix(); 
-              iFrame[2].setTranslation(16.1, 11.243, -18.425);
-              iFrame[2].setRotation(new Quat(new Vec(0.0f, 0.0f, 1.0f), radians(-22.528)));
-              pushMatrix(); 
-                
-                pushMatrix(); 
-                  iFrame[2].applyWorldTransformation(); 
-                  shape(lowLeg);
-                popMatrix();
-              popMatrix();
-            popMatrix();
-          popMatrix();
-        popMatrix();
-      popMatrix();
+      pushMatrix(); 
+        iFrame[0].applyWorldTransformation();
+        shape(upperLeg);
+      popMatrix();                
 
+      iFrame[1].setTranslation(13.543, 22.093, 22.87);
+      iFrame[1].setRotation(new Quat(new Vec(0.0f, 0.0f, 1.0f), radians(20)));  
+      pushMatrix();         
+        iFrame[1].applyWorldTransformation(); 
+        shape(mediumLeg);
+      popMatrix();
+      
+      iFrame[2].setTranslation(16.1, 11.243, -18.425);
+      iFrame[2].setRotation(new Quat(new Vec(0.0f, 0.0f, 1.0f), radians(-22.528)));
+      pushMatrix();         
+        iFrame[2].applyWorldTransformation(); 
+        shape(lowLeg);
+      popMatrix();
+      
     popMatrix();
   }
   

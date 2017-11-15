@@ -3,11 +3,14 @@ public class Spider {
   public InteractiveFrame iBodyFrame;
   Paw [] paws;
   PShape bodyShape;
+  Boolean walk = false;
+  Integer frame = 0;
 
   Spider(Scene scn) {
     scene = scn;
     iBodyFrame = new InteractiveFrame(scn);
     bodyShape = loadShape("images/body.obj");
+    
     paws = new Paw[8];
     paws[0] = new Paw(scene, iBodyFrame, new Vec( 3.27,  3.983, 0), new Quat(new Vec(0.0f, 0.0f, 0.0f), radians( 0 )));
     paws[1] = new Paw(scene, iBodyFrame, new Vec(-3.27,  3.983, 0), new Quat(new Vec(0.0f, 0.0f, 1.0f), radians( 66)));
@@ -20,13 +23,21 @@ public class Spider {
   }
 
   public void draw( ) {
+    
+      
+    
+    
     pushMatrix();
+    
+      if (scene.motionAgent().isInputGrabber(iBodyFrame))
+            scale(1.2);  
+            
+      iBodyFrame.setTranslation(0,0,18); 
       pushMatrix();
         iBodyFrame.applyWorldTransformation();        
-        if (scene.motionAgent().isInputGrabber(iBodyFrame))
-          fill(255, 0, 0);
         shape(bodyShape);
-      popMatrix();   
+      popMatrix(); 
+      
       for(Paw paw : paws){
         paw.draw();
       }
