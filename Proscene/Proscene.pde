@@ -2,17 +2,16 @@ import remixlab.proscene.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 import remixlab.dandelion.constraint.*;
+import remixlab.dandelion.ik.Solver;
 
 Scene scene;
 Spider spider;
-
-Boolean visualHint = false;
 
 void setup() {
   size(1000, 800, P3D);
   scene = new Scene(this);  
   scene.setRadius(90);
-  scene.setPickingVisualHint(visualHint);
+  scene.setPickingVisualHint(false);
   scene.setAxesVisualHint(false);
   scene.setDottedGrid(false);
   scene.showAll();
@@ -21,16 +20,7 @@ void setup() {
 }
 
 void draw() {
-  background(255);
+  background(0);
   lights(); 
   spider.draw();  
-}
-
-void keyPressed(){
-  if(key == ' ')
-    spider.walk = !spider.walk;
-  if(key == 'p'){
-    visualHint = !visualHint;
-    scene.setPickingVisualHint(visualHint);
-  }
 }

@@ -3,12 +3,12 @@ public class Spider {
   public InteractiveFrame iBodyFrame;
   Paw [] paws;
   PShape bodyShape;
-  Boolean walk = false;
   Integer frame = 0;
 
   Spider(Scene scn) {
     scene = scn;
     iBodyFrame = new InteractiveFrame(scn);
+    iBodyFrame.setTranslation(0,0,18); 
     bodyShape = loadShape("images/body.obj");
     
     paws = new Paw[8];
@@ -32,7 +32,6 @@ public class Spider {
       if (scene.motionAgent().isInputGrabber(iBodyFrame))
             scale(1.2);  
             
-      iBodyFrame.setTranslation(0,0,18); 
       pushMatrix();
         iBodyFrame.applyWorldTransformation();        
         shape(bodyShape);
