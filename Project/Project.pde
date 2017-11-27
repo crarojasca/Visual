@@ -6,9 +6,11 @@ import remixlab.dandelion.ik.Solver;
 
 MyScene scene;
 Spider spider;
+Boolean walk;
 
 void setup() {
   size(1000, 800, P3D);
+    walk = false;
     scene = new MyScene(this);
     scene.setRadius(90);
     scene.setPickingVisualHint(false);
@@ -22,6 +24,13 @@ void setup() {
 void draw() {
   background(255);    
 }
+
+public void keyPressed(){
+    if(key == ' '){
+      walk = !walk;
+      spider.init();
+    }
+  }
 
 class MyScene extends Scene {
   
@@ -42,6 +51,7 @@ class MyScene extends Scene {
   }
   
   public void animate() {
-    spider.animate();
-  }
+    spider.animate(walk);
+  }  
+  
 }
