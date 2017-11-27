@@ -3,10 +3,7 @@ public class Spider {
   public InteractiveFrame iBodyFrame;
   Paw [] paws;
   PShape bodyShape;
-  Integer frame = 0;
   
-
-
   Spider(Scene scn) {
     scene = scn;
     iBodyFrame = new InteractiveFrame(scn);
@@ -40,9 +37,19 @@ public class Spider {
     popMatrix();
   } 
   
+  
+  Integer frame = 0;
+  
   public void animate() {
-    for(Paw paw : paws){
+    frame++;
+    pushMatrix();
+      iBodyFrame.setTranslation(0,-frame,0);
+      pushMatrix();
+      for(Paw paw : paws){
         paw.animate();
-    }
+      }  
+      popMatrix();
+    popMatrix();
+    
   }
 }

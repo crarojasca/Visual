@@ -6,6 +6,7 @@ public class Paw {
   public Vec position; 
   public Quat rotation;
   
+  public Vec longPosition;
   public Rotation longRotation;
   
   public Vec midPosition;
@@ -42,6 +43,8 @@ public class Paw {
     
     iFrame[0].setPosition(position);
     iFrame[0].setRotation(rotation);
+    
+    longPosition = iFrame[1].get().position();
     longRotation = iFrame[0].get().orientation();
     
     iFrame[1].setTranslation(13.543, 22.093, 22.87);
@@ -63,7 +66,7 @@ public class Paw {
   }
   
   public void init(){
-    iFrame[0].setPosition(position);
+    iFrame[0].setPosition(longPosition);
     iFrame[0].setOrientation(longRotation);
     
     iFrame[1].setPosition(midPosition);
@@ -113,6 +116,7 @@ public class Paw {
   
   public void animate(){  
     pushMatrix();
+          framePosition = iFrame[2].get().position();
           angle += 10;
           float A = 5;
           iTarget.setTranslation(framePosition.x(), framePosition.y()+A*cos(radians(angle)), framePosition.z()+A*sin(radians(angle)));
@@ -120,7 +124,7 @@ public class Paw {
 
     if(angle > 3*360){
       angle = 0;
-      this.init();
+      //this.init();
     }
   }  
 }
